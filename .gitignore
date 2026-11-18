@@ -1,0 +1,18 @@
+# build output
+dist/
+.astro/
+node_modules/
+
+# env / local
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+
+# NEVER commit paid product files or their sources
+*.pdf
+*.PDF
+*.zip
+*.ZIP
+**/source/
