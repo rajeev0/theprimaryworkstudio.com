@@ -38,7 +38,8 @@ export const STORES = {
  * The import script writes "TODO" where it could not fill a field. TODO is
  * allowed in drafts only; a published product with a TODO fails the build.
  */
-const orTodo = <T extends z.ZodType>(schema: T) => z.union([schema, z.literal('TODO')]);
+const orTodo = <T extends z.ZodType>(schema: T, message: string) =>
+  z.union([schema, z.literal('TODO')], { error: message });
 
 const storeUrl = z
   .url({ message: 'must be a full web address starting with https://' })
@@ -53,13 +54,8 @@ const products = defineCollection({
     generateId: ({ entry }) => entry.split('/')[0],
   }),
   schema: ({ image }) => {
-    const squareImage = (what: string) =>
-      image().refine((img) => img.width === img.height, {
-        message: `${what} must be square (same width and height)`,
-      }).refine((img) => img.width >= 1000, {
-        message: `${what} must be at least 1000px wide`,
-      });
-
+    // Image size/shape (square cover, 2:3 pin, min 1000px) is checked by
+    // `npm run check` (scripts/check.mjs); here we check the files exist.
     return z
       .object({
         title: z.string().min(3, 'title is required'),
@@ -75,17 +71,17 @@ const products = defineCollection({
           .min(10, 'shortDescription is required')
           .max(220, 'shortDescription should be under 220 characters'),
         subject: z
-          .array(orTodo(z.enum(SUBJECTS, { message: `subject must be one of: ${SUBJECTS.join(', ')}` })))
+          .array(orTodo(z.enum(SUBJECTS), `subject must be one of: ${SUBJECTS.join(', ')}`))
           .min(1, 'pick at least one subject'),
         theme: z.array(z.string()).default([]),
         season: z.enum(SEASONS, { message: `season must be one of: ${SEASONS.join(', ')}` }).optional(),
         grade: z.string().min(1, 'grade is required, e.g. "PreK–1"'),
         ages: z.string().optional(),
-        pageCount: orTodo(z.number().int().positive('pageCount must be a whole number above 0')),
+        pageCount: orTodo(z.number().int().positive(), 'pageCount must be a whole number above 0, e.g. 12'),
         formats: z
-          .array(orTodo(z.enum(FORMATS, { message: `formats must be from: ${FORMATS.join(', ')}` })))
+          .array(orTodo(z.enum(FORMATS), `formats must be from: ${FORMATS.join(', ')}`))
           .min(1, 'list at least one format'),
-        price: orTodo(z.number().min(0, 'price must be 0 or more (in US dollars, e.g. 1.00)')),
+        price: orTodo(z.number().min(0), 'price must be a number in US dollars, e.g. 1.00 (0 for free)'),
         isFree: z.boolean().default(false),
         isBundle: z.boolean().default(false),
         bundleItems: z.array(reference('products')).default([]),
@@ -104,13 +100,9 @@ const products = defineCollection({
           })
           .strict()
           .default({}),
-        cover: squareImage('cover'),
-        previews: z.array(squareImage('preview image')).max(8).default([]),
-        pin: image()
-          .refine((img) => Math.abs(img.width / img.height - 2 / 3) < 0.01, {
-            message: 'pin must be 2:3 (e.g. 1000 x 1500)',
-          })
-          .optional(),
+        cover: image(),
+        previews: z.array(image()).max(8, 'at most 8 preview images').default([]),
+        pin: image().optional(),
       })
       .superRefine((p, ctx) => {
         if (p.isFree && p.price !== 0) {
