@@ -1,0 +1,88 @@
+# Pages CMS configuration (https://pagescms.org). Lets Revathi add and edit
+# products in a browser form. Saving commits to GitHub, and Cloudflare Pages
+# rebuilds the site. See README.md, "Method 1".
+#
+# Images live in each product's own folder (src/content/products/<slug>/).
+# In the image picker, open the product's folder (create it first under
+# Media if it's a new product) and upload cover.png, preview1-4.png and
+# pin.png there.
+
+media:
+  input: src/content/products
+  # Paths are written relative to the product's index.md, e.g. "../my-pack/cover.png".
+  output: ..
+  extensions: [png, jpg, jpeg, webp]
+  rename: false
+
+content:
+  - name: products
+    label: Products
+    type: collection
+    path: src/content/products
+    filename: "{slug}/index.md"
+    subfolders: true
+    format: yaml-frontmatter
+    view:
+      primary: title
+      fields: [title, status, price, publishedDate]
+      sort: [publishedDate, title]
+      order: desc
+    fields:
+      - { name: title, label: Title (short, shown on the site), type: string, required: true }
+      - { name: seoTitle, label: SEO title (the full TpT title), type: string }
+      - { name: trackerId, label: Tracker ID (e.g. P-201), type: string, required: true }
+      - name: status
+        label: Status
+        type: select
+        required: true
+        default: draft
+        options: { values: [draft, published] }
+      - { name: publishedDate, label: Published date, type: date, required: true }
+      - { name: shortDescription, label: Short description (1–2 sentences), type: text, required: true }
+      - name: subject
+        label: Subject
+        type: select
+        required: true
+        options:
+          multiple: true
+          values: [Language, Literacy, Math, Practical Life, Sensorial, Art, Geography, Science, Culture, Music]
+      - { name: theme, label: Themes (e.g. Phonics), type: string, list: true }
+      - name: season
+        label: Season (optional)
+        type: select
+        options: { values: [Fall, Winter, Spring, Summer, Back to School, Holidays, All Year] }
+      - { name: grade, label: Grade (e.g. PreK–1), type: string, required: true }
+      - { name: ages, label: Ages (optional, e.g. Ages 3–5), type: string }
+      - { name: pageCount, label: Number of pages, type: number, required: true }
+      - name: formats
+        label: Formats
+        type: select
+        required: true
+        options:
+          multiple: true
+          values: [US Letter, A4, Color, Black & White]
+      - { name: price, label: Price in US dollars (0 if free), type: number, required: true }
+      - { name: isFree, label: Free product, type: boolean, default: false }
+      - { name: featured, label: Featured on the home page, type: boolean, default: false }
+      - { name: isBundle, label: This is a bundle, type: boolean, default: false }
+      - name: bundleItems
+        label: Products in this bundle (folder names, e.g. ck-words-phonics-pack)
+        type: string
+        list: true
+      - { name: whatsIncluded, label: What's included (one item per line), type: string, list: true }
+      - { name: words, label: Words, type: string, list: true }
+      - { name: skills, label: Skills, type: string, list: true, required: true }
+      - { name: tags, label: Tags / keywords, type: string, list: true }
+      - name: stores
+        label: Store links (leave empty if not sold there)
+        type: object
+        fields:
+          - { name: tpt, label: Teachers Pay Teachers URL, type: string }
+          - { name: etsy, label: Etsy URL, type: string }
+          - { name: tes, label: TES URL, type: string }
+          - { name: madeByTeachers, label: Made By Teachers URL, type: string }
+          - { name: boom, label: Boom Learning URL, type: string }
+      - { name: cover, label: Cover image (square, 1500×1500), type: image, required: true }
+      - { name: previews, label: Preview images (square, up to 4), type: image, options: { multiple: { max: 8 } } }
+      - { name: pin, label: Pinterest pin (2:3, 1000×1500), type: image }
+      - { name: body, label: Full description, type: rich-text }

@@ -41,9 +41,11 @@ export const STORES = {
 const orTodo = <T extends z.ZodType>(schema: T, message: string) =>
   z.union([schema, z.literal('TODO')], { error: message });
 
-const storeUrl = z
-  .url({ message: 'must be a full web address starting with https://' })
-  .optional();
+/** Treat empty text (what a form saves for a blank box) as "not set". */
+const blankToUndefined = (v: unknown) => (typeof v === 'string' && v.trim() === '' ? undefined : v);
+const optional = <T extends z.ZodType>(schema: T) => z.preprocess(blankToUndefined, schema.optional());
+
+const storeUrl = optional(z.url({ message: 'must be a full web address starting with https://' }));
 
 const products = defineCollection({
   loader: glob({
@@ -60,7 +62,7 @@ const products = defineCollection({
       .object({
         title: z.string().min(3, 'title is required'),
         /** Longer title for search engines / browser tab. Defaults to title. */
-        seoTitle: z.string().optional(),
+        seoTitle: optional(z.string()),
         trackerId: z.string().min(1, 'trackerId is required, e.g. "P-201"'),
         status: z.enum(['draft', 'published'], {
           message: 'status must be "draft" or "published"',
@@ -74,9 +76,9 @@ const products = defineCollection({
           .array(orTodo(z.enum(SUBJECTS), `subject must be one of: ${SUBJECTS.join(', ')}`))
           .min(1, 'pick at least one subject'),
         theme: z.array(z.string()).default([]),
-        season: z.enum(SEASONS, { message: `season must be one of: ${SEASONS.join(', ')}` }).optional(),
+        season: optional(z.enum(SEASONS, { message: `season must be one of: ${SEASONS.join(', ')}` })),
         grade: z.string().min(1, 'grade is required, e.g. "PreK–1"'),
-        ages: z.string().optional(),
+        ages: optional(z.string()),
         pageCount: orTodo(z.number().int().positive(), 'pageCount must be a whole number above 0, e.g. 12'),
         formats: z
           .array(orTodo(z.enum(FORMATS), `formats must be from: ${FORMATS.join(', ')}`))
@@ -102,7 +104,7 @@ const products = defineCollection({
           .default({}),
         cover: image(),
         previews: z.array(image()).max(8, 'at most 8 preview images').default([]),
-        pin: image().optional(),
+        pin: z.preprocess(blankToUndefined, image().optional()),
       })
       .superRefine((p, ctx) => {
         if (p.isFree && p.price !== 0) {

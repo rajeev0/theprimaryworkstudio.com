@@ -65,7 +65,8 @@ for (const d of productDirs) {
   const published = /^status:\s*["']?published/m.test(fm);
 
   // Every image referenced in the front matter.
-  const refs = [...fm.matchAll(/["']?(\.\/[^"'\s]+\.(?:png|jpe?g|webp))["']?/gi)].map((m) => m[1]);
+  // "./cover.png" (import script, template) or "../<slug>/cover.png" (Pages CMS).
+  const refs = [...fm.matchAll(/["'\s](\.{1,2}\/[^"'\s]+\.(?:png|jpe?g|webp))["']?/gi)].map((m) => m[1]);
   for (const ref of refs) {
     const file = path.join(dir, ref);
     const name = path.basename(ref).toLowerCase();
