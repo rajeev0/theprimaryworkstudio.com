@@ -21,7 +21,7 @@ formats:
   - "A4"
   - "Color"
   - "Black & White"
-price: 1
+price: 1.15
 isFree: false
 isBundle: false
 bundleItems: []
