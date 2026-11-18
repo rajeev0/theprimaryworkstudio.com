@@ -1,0 +1,163 @@
+---
+/**
+ * Cover + preview gallery. Without JavaScript each thumbnail is a plain link
+ * to the full-size image. With JavaScript, thumbnails swap the main image and
+ * the main image opens a simple lightbox.
+ */
+import type { ImageMetadata } from 'astro';
+import { Picture, getImage } from 'astro:assets';
+
+interface Props {
+  title: string;
+  images: ImageMetadata[];
+  /** Pinterest "Save" image (the 2:3 pin), absolute URL. */
+  pinMedia?: string;
+  pinDescription?: string;
+}
+const { title, images, pinMedia, pinDescription } = Astro.props;
+const full = await Promise.all(images.map((src) => getImage({ src, format: 'webp', width: 1500 })));
+const alts = images.map((_, i) => (i === 0 ? `${title}: cover` : `${title}: preview ${i}`));
+---
+
+<div class="gallery" data-gallery>
+  <a class="gallery__main" href={full[0].src} data-main>
+    <Picture
+      src={images[0]}
+      alt={alts[0]}
+      formats={['avif', 'webp']}
+      widths={[480, 720, 1000, 1500]}
+      sizes="(min-width: 60rem) 34rem, 92vw"
+      loading="eager"
+      fetchpriority="high"
+      data-pin-media={pinMedia}
+      data-pin-description={pinDescription}
+    />
+  </a>
+  {
+    images.length > 1 && (
+      <ul class="gallery__thumbs">
+        {images.map((img, i) => (
+          <li>
+            <a href={full[i].src} data-thumb={i} aria-label={`View ${i === 0 ? 'cover' : `preview ${i}`}`} aria-current={i === 0 ? 'true' : undefined}>
+              <Picture src={img} alt="" formats={['avif', 'webp']} widths={[160, 240]} sizes="7rem" loading="lazy" data-pin-nopin="true" />
+            </a>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+  <dialog class="lightbox" aria-label="Image viewer">
+    <form method="dialog"><button class="lightbox__close" aria-label="Close">×</button></form>
+    <img alt="" />
+  </dialog>
+  <script type="application/json" data-gallery-images set:html={JSON.stringify(full.map((f, i) => ({ src: f.src, alt: alts[i] })))} />
+</div>
+
+<script>
+  for (const root of document.querySelectorAll<HTMLElement>('[data-gallery]')) {
+    const data: { src: string; alt: string }[] = JSON.parse(root.querySelector('[data-gallery-images]')!.textContent!);
+    const main = root.querySelector<HTMLAnchorElement>('[data-main]')!;
+    const mainImg = main.querySelector('img')!;
+    const mainSources = main.querySelectorAll('source');
+    const dialog = root.querySelector<HTMLDialogElement>('dialog')!;
+    const big = dialog.querySelector('img')!;
+    let current = 0;
+
+    root.querySelectorAll<HTMLAnchorElement>('[data-thumb]').forEach((a) => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        current = Number(a.dataset.thumb);
+        // Swap to the full-size WebP for the chosen image.
+        mainSources.forEach((s) => s.remove());
+        mainImg.removeAttribute('srcset');
+        mainImg.src = data[current].src;
+        mainImg.alt = data[current].alt;
+        main.href = data[current].src;
+        root.querySelectorAll('[data-thumb]').forEach((t) => t.removeAttribute('aria-current'));
+        a.setAttribute('aria-current', 'true');
+      });
+    });
+    main.addEventListener('click', (e) => {
+      if (typeof dialog.showModal !== 'function') return;
+      e.preventDefault();
+      big.src = data[current].src;
+      big.alt = data[current].alt;
+      dialog.showModal();
+    });
+    dialog.addEventListener('click', (e) => {
+      if (e.target === dialog) dialog.close();
+    });
+  }
+</script>
+
+<style>
+  .gallery__main {
+    display: block;
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
+    background: var(--paper);
+    cursor: zoom-in;
+  }
+  .gallery__main :global(img) {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: contain;
+  }
+  .gallery__thumbs {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.6rem;
+    list-style: none;
+    padding: 0;
+    margin: 0.75rem 0 0;
+  }
+  .gallery__thumbs a {
+    display: block;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    border: 2px solid var(--line);
+  }
+  .gallery__thumbs a[aria-current='true'],
+  .gallery__thumbs a:hover {
+    border-color: var(--sage);
+  }
+  .gallery__thumbs :global(img) {
+    aspect-ratio: 1;
+    object-fit: cover;
+    width: 100%;
+  }
+  .lightbox {
+    border: 0;
+    padding: 0;
+    background: transparent;
+    max-width: min(94vw, 94vh);
+    max-height: 94vh;
+  }
+  .lightbox::backdrop {
+    background: rgb(30 40 36 / 0.8);
+  }
+  .lightbox img {
+    width: 100%;
+    height: auto;
+    max-height: 94vh;
+    object-fit: contain;
+    border-radius: var(--radius-sm);
+    background: #fff;
+  }
+  .lightbox__close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 50%;
+    border: 0;
+    background: var(--sage);
+    color: #fff;
+    font-size: 1.6rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+</style>

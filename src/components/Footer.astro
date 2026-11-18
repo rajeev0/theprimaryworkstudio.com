@@ -1,0 +1,65 @@
+---
+import { SITE, FEATURES } from '../site';
+import Newsletter from './Newsletter.astro';
+const year = new Date().getFullYear();
+---
+
+{FEATURES.showNewsletter && <Newsletter />}
+
+<footer class="site-footer">
+  <div class="wrap site-footer__inner">
+    <div>
+      <p class="site-footer__name">{SITE.name}</p>
+      <p class="muted">{SITE.tagline}</p>
+    </div>
+    <nav aria-label="Footer">
+      <ul>
+        <li><a href="/shop/">Shop</a></li>
+        <li><a href="/about/">About</a></li>
+        {SITE.storeLinks.tpt && <li><a href={SITE.storeLinks.tpt} rel="noopener">Our TpT store</a></li>}
+        {SITE.storeLinks.etsy && <li><a href={SITE.storeLinks.etsy} rel="noopener">Our Etsy shop</a></li>}
+        <li><a href="/terms/">Terms of Use</a></li>
+        <li><a href="/privacy/">Privacy</a></li>
+        <li><a href="/rss.xml">New products (RSS)</a></li>
+        <li><a href={`mailto:${SITE.email}`}>{SITE.email}</a></li>
+      </ul>
+    </nav>
+  </div>
+  <p class="wrap site-footer__copy muted">© {year} {SITE.name}. All rights reserved.</p>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: var(--space);
+    border-top: 1px solid var(--line);
+    background: var(--paper);
+    padding-block: 2.5rem 1.5rem;
+    font-size: 0.95rem;
+  }
+  .site-footer__inner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+  .site-footer__name {
+    font-family: var(--font-head);
+    font-weight: 700;
+    color: var(--sage);
+    font-size: 1.1rem;
+    margin: 0;
+  }
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.4rem;
+    max-width: 40rem;
+  }
+  .site-footer__copy {
+    margin-top: 1.5rem;
+    font-size: 0.85rem;
+  }
+</style>

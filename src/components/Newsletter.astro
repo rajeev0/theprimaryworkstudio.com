@@ -1,0 +1,55 @@
+---
+/**
+ * "Join the newsletter" placeholder. OFF by default.
+ * Turn on with PUBLIC_SHOW_NEWSLETTER=true once a (free) email service is chosen.
+ * The form intentionally submits nowhere until then.
+ */
+---
+
+<section class="newsletter" aria-labelledby="nl-title">
+  <div class="wrap newsletter__inner">
+    <div>
+      <h2 id="nl-title">Join the newsletter</h2>
+      <p class="muted">New shelf work and the occasional freebie. Coming soon.</p>
+    </div>
+    <form onsubmit="return false" aria-describedby="nl-note">
+      <label class="visually-hidden" for="nl-email">Email address</label>
+      <input id="nl-email" type="email" placeholder="you@example.com" disabled />
+      <button class="btn" type="submit" disabled>Sign up</button>
+      <p id="nl-note" class="visually-hidden">Sign-up is not open yet.</p>
+    </form>
+  </div>
+</section>
+
+<style>
+  .newsletter {
+    margin-top: var(--space);
+    background: var(--sage-soft);
+    padding-block: 2rem;
+  }
+  .newsletter__inner {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem 2rem;
+    align-items: center;
+    justify-content: space-between;
+  }
+  h2 {
+    margin: 0 0 0.25rem;
+  }
+  p {
+    margin: 0;
+  }
+  form {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  input {
+    font: inherit;
+    padding: 0.6rem 1rem;
+    border-radius: 999px;
+    border: 1.5px solid var(--line);
+    min-width: min(100%, 16rem);
+  }
+</style>

@@ -1,0 +1,22 @@
+---
+import Base from '../../layouts/Base.astro';
+import ProductGrid from '../../components/ProductGrid.astro';
+import Filters from '../../components/Filters.astro';
+import { getProducts, facetValues } from '../../lib/products';
+
+const products = await getProducts();
+const facets = facetValues(products);
+---
+
+<Base title="Shop all Montessori printables" description="Browse all Montessori printables: worksheets, cards and activity packs for the Montessori shelf.">
+  <div class="wrap section">
+    <h1>Shop</h1>
+    <p class="lede">
+      Every product is sold through trusted teacher stores. Pick one to see the pages inside, then buy it where you like to shop.
+    </p>
+    <Filters facets={facets} enhance />
+    <p class="muted" data-count aria-live="polite">{products.length} product{products.length === 1 ? '' : 's'}</p>
+    <ProductGrid products={products} eagerCount={4} id="catalog" />
+    <p data-empty hidden>No products match all of those filters yet. <a href="/shop/">Clear filters</a></p>
+  </div>
+</Base>

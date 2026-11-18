@@ -1,0 +1,209 @@
+---
+import { getImage } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import ProductGrid from '../components/ProductGrid.astro';
+import { SITE } from '../site';
+import { getProducts, isNew, facetValues } from '../lib/products';
+import banner from '../assets/brand/Banner_background_1200x320.png';
+
+const products = await getProducts();
+// Featured products get their own row; "New" shows the other recent ones so nothing repeats.
+const featured = products.filter((p) => p.data.featured).slice(0, 4);
+const newest = products.filter((p) => isNew(p) && !featured.includes(p)).slice(0, 4);
+const facets = facetValues(products);
+const tiles = [
+  ...facets.subject.map((f) => ({ ...f, href: `/shop/subject/${f.slug}/`, kind: 'Subject' })),
+  ...facets.theme.map((f) => ({ ...f, href: `/shop/theme/${f.slug}/`, kind: 'Theme' })),
+  ...facets.season.map((f) => ({ ...f, href: `/shop/season/${f.slug}/`, kind: 'Season' })),
+];
+
+const bg = await getImage({ src: banner, format: 'webp', width: 1200 });
+---
+
+<Base>
+  <section class="hero" style={`--hero-bg: url(${bg.src})`}>
+    <div class="wrap hero__inner">
+      <!-- Full badge as supplied; padding keeps 1/10 clear space. -->
+      <div class="hero__badge">
+        <img src="/brand/badge_full.svg" alt={`${SITE.name} logo`} width="300" height="300" fetchpriority="high" />
+      </div>
+      <h1>{SITE.name}</h1>
+      <p class="hero__tagline">{SITE.tagline}</p>
+      <p class="hero__intro">{SITE.intro}</p>
+      <p><a class="btn" href="/shop/">Browse the shop</a></p>
+    </div>
+  </section>
+
+  {
+    newest.length > 0 && (
+      <section class="section wrap" aria-labelledby="new-title">
+        <div class="section-head">
+          <h2 id="new-title">New on the shelf</h2>
+          <a href="/shop/">See all products →</a>
+        </div>
+        <ProductGrid products={newest} eagerCount={2} />
+      </section>
+    )
+  }
+
+  {
+    featured.length > 0 && (
+      <section class="section wrap" aria-labelledby="featured-title">
+        <div class="section-head">
+          <h2 id="featured-title">Featured</h2>
+        </div>
+        <ProductGrid products={featured} />
+      </section>
+    )
+  }
+
+  {
+    tiles.length > 0 && (
+      <section class="section wrap" aria-labelledby="browse-title">
+        <div class="section-head">
+          <h2 id="browse-title">Browse by subject or theme</h2>
+        </div>
+        <ul class="tiles">
+          {tiles.map((t) => (
+            <li>
+              <a class="tile" href={t.href}>
+                <span class="tile__kind">{t.kind}</span>
+                <span class="tile__name">{t.value}</span>
+                <span class="tile__count">
+                  {t.count} product{t.count === 1 ? '' : 's'}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+
+  <section class="section wrap" aria-labelledby="about-title">
+    <div class="about-teaser">
+      <img src="/brand/badge_icon.svg" alt="" width="96" height="96" loading="lazy" />
+      <div>
+        <h2 id="about-title">Hi, I'm Revathi</h2>
+        <p>
+          I'm a CDA-credentialed Montessori teacher in Georgia with more than 10 years in a Montessori Primary classroom. Every
+          resource here started as something I needed for my own shelves. I make it, try it with real children, and check it by hand
+          before it's shared.
+        </p>
+        <a href="/about/">Read more about me →</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    background-color: var(--cream);
+    background-image: var(--hero-bg);
+    /* Show the whole 1200x320 texture as a strip along the bottom, never cropped. */
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+    background-position: center bottom;
+    border-bottom: 1px solid var(--line);
+  }
+  .hero__inner {
+    text-align: center;
+    padding-block: clamp(2rem, 5vw, 3.5rem) clamp(5rem, 22vw, 12rem);
+    max-width: 44rem;
+  }
+  .hero__badge {
+    width: clamp(8rem, 18vw, 10.5rem);
+    margin: 0 auto 0.5rem;
+    padding: calc(clamp(8rem, 18vw, 10.5rem) / 10);
+    box-sizing: content-box;
+  }
+  .hero__badge img {
+    width: 100%;
+    height: auto;
+  }
+  .hero h1 {
+    margin-bottom: 0.15em;
+  }
+  .hero__tagline {
+    font-family: var(--font-head);
+    font-weight: 700;
+    color: var(--terracotta-ink);
+    font-size: 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+  .hero__intro {
+    font-size: 1.1rem;
+    max-width: 34rem;
+    margin-inline: auto;
+    margin-bottom: 1.5rem;
+    /* soft backing so text stays readable over the texture */
+    background: rgb(255 248 236 / 0.85);
+    border-radius: var(--radius-sm);
+    padding: 0.25rem 0.5rem;
+  }
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 12rem), 1fr));
+    gap: 1rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .tile {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 1.1rem 1.2rem;
+    border-radius: var(--radius);
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-left: 5px solid var(--terracotta);
+    text-decoration: none;
+    color: var(--charcoal);
+    height: 100%;
+  }
+  .tile:hover {
+    border-color: var(--sage);
+    border-left-color: var(--sage);
+  }
+  .tile__kind {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+  }
+  .tile__name {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: var(--sage);
+  }
+  .tile__count {
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+  .about-teaser {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: clamp(1.25rem, 4vw, 2rem);
+    max-width: 52rem;
+  }
+  .about-teaser img {
+    flex: none;
+    width: clamp(4rem, 12vw, 6rem);
+    padding: clamp(0.4rem, 1.2vw, 0.6rem);
+    box-sizing: content-box;
+  }
+  .about-teaser p {
+    max-width: 38rem;
+  }
+  @media (max-width: 30em) {
+    .about-teaser {
+      flex-direction: column;
+    }
+  }
+</style>

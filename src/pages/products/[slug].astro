@@ -1,0 +1,328 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getImage } from 'astro:assets';
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Gallery from '../../components/Gallery.astro';
+import ProductGrid from '../../components/ProductGrid.astro';
+import { SITE } from '../../site';
+import {
+  getProducts,
+  formatPrice,
+  storeLinks,
+  ageLabel,
+  bundlesContaining,
+  related,
+  slugify,
+  isNew,
+  type Product,
+} from '../../lib/products';
+
+export const getStaticPaths = (async () => {
+  const all = await getProducts();
+  return all.map((product) => ({ params: { slug: product.id }, props: { product, all } }));
+}) satisfies GetStaticPaths;
+
+const { product: p, all } = Astro.props as { product: Product; all: Product[] };
+const d = p.data;
+const { Content } = await render(p);
+
+const stores = storeLinks(p);
+const byId = new Map(all.map((x) => [x.id, x]));
+const items = d.bundleItems.map((ref) => byId.get(ref.id)).filter((x): x is Product => Boolean(x));
+const inBundles = bundlesContaining(p, all);
+const relatedProducts = related(p, all);
+
+const paper = d.formats.filter((f) => f === 'US Letter' || f === 'A4');
+const colour = d.formats.filter((f) => f === 'Color' || f === 'Black & White');
+
+// Social / Pinterest image: the 2:3 pin, or the cover if there is no pin.
+const shareSrc = d.pin ?? d.cover;
+const share = await getImage({ src: shareSrc, format: 'jpg', width: Math.min(1000, shareSrc.width), quality: 85 });
+const shareUrl = new URL(share.src, Astro.site).href;
+const coverJpg = await getImage({ src: d.cover, format: 'jpg', width: 1200, quality: 85 });
+
+const priceNum = typeof d.price === 'number' ? d.price : undefined;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: d.seoTitle ?? d.title,
+  description: d.shortDescription,
+  image: [new URL(coverJpg.src, Astro.site).href, shareUrl],
+  sku: d.trackerId,
+  brand: { '@type': 'Brand', name: SITE.name },
+  category: d.subject.join(', '),
+  audience: { '@type': 'EducationalAudience', educationalRole: 'teacher' },
+  url: new URL(Astro.url.pathname, Astro.site).href,
+  ...(stores.length && priceNum !== undefined
+    ? {
+        offers: stores.map((s) => ({
+          '@type': 'Offer',
+          url: s.url,
+          price: priceNum.toFixed(2),
+          priceCurrency: 'USD',
+          availability: 'https://schema.org/InStock',
+          seller: { '@type': 'Organization', name: s.name },
+        })),
+      }
+    : {}),
+};
+const meta =
+  priceNum !== undefined
+    ? [
+        { property: 'product:price:amount', content: priceNum.toFixed(2) },
+        { property: 'product:price:currency', content: 'USD' },
+        { property: 'og:price:amount', content: priceNum.toFixed(2) },
+        { property: 'og:price:currency', content: 'USD' },
+        { property: 'product:availability', content: 'in stock' },
+      ]
+    : [];
+---
+
+<Base
+  title={d.seoTitle ?? d.title}
+  description={d.shortDescription}
+  type="product"
+  image={{ src: share.src, width: share.attributes.width ?? 1000, height: share.attributes.height ?? 1500, alt: d.title }}
+  jsonLd={jsonLd}
+  meta={meta}
+  noindex={d.status === 'draft'}
+>
+  <div class="wrap section">
+    <nav aria-label="Breadcrumb" class="muted crumbs">
+      <a href="/shop/">Shop</a>
+      {d.subject[0] && d.subject[0] !== 'TODO' && <> / <a href={`/shop/subject/${slugify(d.subject[0])}/`}>{d.subject[0]}</a></>}
+    </nav>
+
+    <div class="product">
+      <Gallery title={d.title} images={[d.cover, ...d.previews]} pinMedia={shareUrl} pinDescription={`${d.title}: ${d.shortDescription}`} />
+
+      <div class="product__info">
+        <p class="product__flags">
+          {d.status === 'draft' && <span class="badge badge--sage">Draft: not on the live site</span>}
+          {isNew(p) && <span class="badge">New</span>}
+          {d.isBundle && <span class="badge badge--sage">Bundle</span>}
+          {d.isFree && <span class="badge">Free</span>}
+        </p>
+        <h1>{d.title}</h1>
+        <p class="product__short">{d.shortDescription}</p>
+
+        <dl class="facts">
+          <div><dt>Grade</dt><dd>{ageLabel(p)}</dd></div>
+          <div><dt>Pages</dt><dd>{d.pageCount}</dd></div>
+          {paper.length > 0 && <div><dt>Paper</dt><dd>{paper.join(' / ')}</dd></div>}
+          {colour.length > 0 && <div><dt>Print</dt><dd>{colour.join(' / ')}</dd></div>}
+          <div><dt>Subject</dt><dd>{d.subject.join(', ')}</dd></div>
+        </dl>
+
+        <p class="product__price">{formatPrice(p)}</p>
+
+        {
+          stores.length > 0 ? (
+            <ul class="buy">
+              {stores.map((s, i) => (
+                <li>
+                  <a class={i === 0 ? 'btn' : 'btn btn--ghost'} href={s.url} rel="noopener">
+                    {d.isFree ? 'Download free' : 'Buy'} on {s.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p class="muted">Coming soon.</p>
+          )
+        }
+        <p class="muted small">Digital download, sold and delivered by the store above. Nothing is shipped.</p>
+      </div>
+    </div>
+
+    <div class="details">
+      <section class="prose" aria-labelledby="about-this">
+        <h2 id="about-this">About this resource</h2>
+        <Content />
+
+        {
+          d.whatsIncluded.length > 0 && (
+            <>
+              <h2>What's included</h2>
+              <ul>
+                {d.whatsIncluded.map((x) => (
+                  <li>{x}</li>
+                ))}
+              </ul>
+            </>
+          )
+        }
+      </section>
+
+      <aside class="side">
+        {
+          d.words.length > 0 && (
+            <section>
+              <h2 class="side__title">Words ({d.words.length})</h2>
+              <ul class="chips">
+                {d.words.map((w) => (
+                  <li class="chip">{w}</li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
+        {
+          d.skills.length > 0 && (
+            <section>
+              <h2 class="side__title">Skills</h2>
+              <ul>
+                {d.skills.map((s) => (
+                  <li>{s}</li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
+        {
+          d.theme.length > 0 && (
+            <section>
+              <h2 class="side__title">Themes</h2>
+              <ul class="chips">
+                {d.theme.map((t) => (
+                  <li>
+                    <a class="chip" href={`/shop/theme/${slugify(t)}/`}>
+                      {t}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
+      </aside>
+    </div>
+
+    {
+      items.length > 0 && (
+        <section class="section-sub" aria-labelledby="in-bundle">
+          <h2 id="in-bundle">In this bundle ({items.length} products)</h2>
+          <ProductGrid products={items} />
+        </section>
+      )
+    }
+
+    {
+      inBundles.length > 0 && (
+        <section class="section-sub" aria-labelledby="save-bundle">
+          <h2 id="save-bundle">Save with the bundle</h2>
+          <ProductGrid products={inBundles} />
+        </section>
+      )
+    }
+
+    {
+      relatedProducts.length > 0 && (
+        <section class="section-sub" aria-labelledby="related">
+          <h2 id="related">You may also like</h2>
+          <ProductGrid products={relatedProducts} />
+        </section>
+      )
+    }
+  </div>
+</Base>
+
+<style>
+  .crumbs {
+    margin-bottom: 1rem;
+  }
+  .product {
+    display: grid;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    align-items: start;
+  }
+  @media (min-width: 52em) {
+    .product {
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    }
+  }
+  .product__flags {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    margin: 0 0 0.5rem;
+  }
+  .product__flags:not(:has(*)) {
+    display: none;
+  }
+  .product__short {
+    font-size: 1.15rem;
+  }
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+    gap: 0.75rem 1.25rem;
+    margin: 1.25rem 0;
+    padding: 1rem 1.2rem;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+  }
+  .facts dt {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+  }
+  .facts dd {
+    margin: 0;
+    font-weight: 700;
+  }
+  .product__price {
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 1.8rem;
+    color: var(--terracotta-ink);
+    margin: 0 0 0.75rem;
+  }
+  .buy {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 0.75rem;
+  }
+  .small {
+    font-size: 0.9rem;
+  }
+  .details {
+    display: grid;
+    gap: 2rem;
+    margin-top: var(--space);
+  }
+  @media (min-width: 52em) {
+    .details {
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    }
+  }
+  .side {
+    display: grid;
+    gap: 1.5rem;
+    align-content: start;
+    align-self: start;
+    padding: 1.25rem;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+  }
+  .side__title {
+    font-size: 1.05rem;
+  }
+  .side ul:not(.chips) {
+    padding-left: 1.2em;
+    margin: 0;
+  }
+  .side .chip {
+    font-size: 0.95rem;
+  }
+  .section-sub {
+    margin-top: var(--space);
+  }
+</style>

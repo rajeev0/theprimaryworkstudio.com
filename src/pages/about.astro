@@ -1,0 +1,76 @@
+---
+/*
+ * About page. Text adapted from 00_Brand/TpT_About_Store.md (TpT "About your store").
+ * Brand rule: no age range for the shop as a whole. Revathi's own classroom
+ * experience may name pre-K, because that's a fact about her, not a limit on the shop.
+ */
+import Base from '../layouts/Base.astro';
+import { SITE } from '../site';
+---
+
+<Base title="About Revathi" description="Meet Revathi, the CDA-credentialed Montessori teacher behind The Primary Work Studio.">
+  <div class="wrap section about">
+    <div class="about__badge">
+      <img src="/brand/badge_full.svg" alt={`${SITE.name} logo`} width="300" height="300" />
+    </div>
+    <div class="prose">
+      <h1>About {SITE.name}</h1>
+
+      <h2>Experience</h2>
+      <p>
+        Hi, I'm Revathi, the teacher behind {SITE.name}! I'm a CDA-credentialed Montessori teacher in Georgia, and I've spent more
+        than 10 years in a Montessori Primary (pre-K) classroom, helping young children discover how much they can do on their own.
+      </p>
+      <p>
+        I keep learning alongside my students. I've completed professional training in fine-motor development, early math and number
+        sense, building vocabulary and language, guiding children's behavior, using books with children, child development, and
+        developmentally appropriate practice (DAP).
+      </p>
+      <p>
+        Every resource in this shop started as something I needed for my own shelves. I make it, try it, and check it by hand before
+        it's shared here, so you get materials that really work with real children.
+      </p>
+
+      <h2>Teaching style</h2>
+      <p>
+        I believe every day is a chance to show a child something new, or to practice something they've just learned. My classroom is
+        calm, hands-on and child-led: children choose their work from the shelf, repeat it until they master it, and check their own
+        answers.
+      </p>
+      <p>
+        I've learned that every child is different. Some love to sing, some to paint, some to count or read, so I try to meet each
+        child through what excites them. I celebrate small wins, like a new word used correctly or a first number traced, and I treat
+        every child with patience, dignity and respect.
+      </p>
+      <p>
+        That's what you'll find in my resources: clear pictures, one concept at a time, control cards for self-checking, and seasonal
+        themes that keep little hands busy and curious. They work just as well on a classroom shelf as at the kitchen table.
+      </p>
+
+      <h2>Say hello</h2>
+      <p>Questions or requests? Email <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.</p>
+      <p><a class="btn" href="/shop/">Browse the shop</a></p>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .about {
+    display: grid;
+    gap: 2rem;
+    align-items: start;
+  }
+  @media (min-width: 52em) {
+    .about {
+      grid-template-columns: 12rem minmax(0, 1fr);
+    }
+  }
+  .about__badge {
+    width: 10rem;
+    padding: 1rem; /* 1/10 clear space */
+    box-sizing: content-box;
+  }
+  .about__badge img {
+    width: 100%;
+  }
+</style>

@@ -1,0 +1,42 @@
+---
+/** Plain category pages, e.g. /shop/subject/language/. These work with no JavaScript. */
+import type { GetStaticPaths } from 'astro';
+import Base from '../../../layouts/Base.astro';
+import ProductGrid from '../../../components/ProductGrid.astro';
+import Filters from '../../../components/Filters.astro';
+import { getProducts, facetValues, FACETS, FACET_KEYS, slugify, type FacetKey } from '../../../lib/products';
+
+export const getStaticPaths = (async () => {
+  const products = await getProducts();
+  const facets = facetValues(products);
+  return FACET_KEYS.flatMap((key) =>
+    facets[key].map((v) => ({
+      params: { facet: key, value: v.slug },
+      props: {
+        key,
+        label: v.value,
+        facets,
+        products: products.filter((p) => FACETS[key].values(p).some((x) => slugify(x) === v.slug)),
+      },
+    })),
+  );
+}) satisfies GetStaticPaths;
+
+const { key, label, facets, products } = Astro.props as Awaited<ReturnType<typeof getStaticPaths>>[number]['props'] & {
+  key: FacetKey;
+};
+const heading = key === 'grade' ? `Grade ${label}` : label;
+---
+
+<Base
+  title={`${heading} Montessori printables`}
+  description={`${heading} Montessori printables from The Primary Work Studio: ${products.length} product${products.length === 1 ? '' : 's'}.`}
+>
+  <div class="wrap section">
+    <nav aria-label="Breadcrumb" class="muted"><a href="/shop/">Shop</a> / {FACETS[key].label}</nav>
+    <h1>{heading}</h1>
+    <Filters facets={facets} active={{ key, slug: slugify(label) }} />
+    <p class="muted">{products.length} product{products.length === 1 ? '' : 's'}</p>
+    <ProductGrid products={products} eagerCount={4} />
+  </div>
+</Base>

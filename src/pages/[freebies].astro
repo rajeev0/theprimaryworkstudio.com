@@ -1,0 +1,25 @@
+---
+/**
+ * /freebies/ only exists once at least one published product has isFree: true.
+ * Free products link to their free download on TpT (never to a file in this repo).
+ */
+import type { GetStaticPaths } from 'astro';
+import Base from '../layouts/Base.astro';
+import ProductGrid from '../components/ProductGrid.astro';
+import { getProducts, type Product } from '../lib/products';
+
+export const getStaticPaths = (async () => {
+  const free = (await getProducts()).filter((p) => p.data.isFree);
+  return free.length ? [{ params: { freebies: 'freebies' }, props: { free } }] : [];
+}) satisfies GetStaticPaths;
+
+const { free } = Astro.props as { free: Product[] };
+---
+
+<Base title="Freebies" description="Free Montessori printables from The Primary Work Studio.">
+  <div class="wrap section">
+    <h1>Freebies</h1>
+    <p class="lede">Free shelf work to try. Each one downloads from our store page.</p>
+    <ProductGrid products={free} eagerCount={4} />
+  </div>
+</Base>

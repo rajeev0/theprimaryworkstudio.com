@@ -1,0 +1,387 @@
+/* ==========================================================================
+   The Primary Work Studio: global styles
+   Brand colours from 00_Brand/Brand_Guide.md. Contrast notes (WCAG AA, 4.5:1):
+   - sage #2F5D50 on cream 7.1:1, charcoal on cream 12:1: pass
+   - terracotta #C8734A fails as text (3.3:1) and behind white text (3.5:1),
+     so buttons and terracotta text use --terracotta-ink #A85C38 (4.9:1 / 4.7:1).
+     #C8734A is kept for decoration only (rules, dots, borders).
+   - mustard #E2B44B badges always carry charcoal text (6.5:1).
+   ========================================================================== */
+
+@font-face {
+  font-family: 'Quicksand';
+  src: url('/fonts/quicksand-latin-500-normal.woff2') format('woff2');
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Quicksand';
+  src: url('/fonts/quicksand-latin-700-normal.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Andika';
+  src: url('/fonts/andika-latin-400-normal.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Andika';
+  src: url('/fonts/andika-latin-700-normal.woff2') format('woff2');
+  font-weight: 700;
+  font-display: swap;
+}
+
+:root {
+  --sage: #2f5d50;
+  --sage-soft: #dce7e1;
+  --terracotta: #c8734a; /* decoration only */
+  --terracotta-ink: #a85c38; /* text + button backgrounds */
+  --terracotta-ink-hover: #8f4c2d;
+  --cream: #fff8ec;
+  --paper: #fffdf8;
+  --line: #e8dcc6;
+  --charcoal: #333333;
+  --muted: #5c5c5c; /* 6.3:1 on cream */
+  --mustard: #e2b44b;
+
+  --font-head: 'Quicksand', ui-rounded, 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'Andika', 'Segoe UI', system-ui, -apple-system, sans-serif;
+
+  --radius: 14px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 2px rgb(51 51 51 / 0.05), 0 6px 18px rgb(47 93 80 / 0.07);
+  --wrap: 72rem;
+  --gutter: clamp(1rem, 4vw, 2rem);
+  --space: clamp(2.5rem, 6vw, 4.5rem);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--cream);
+  color: var(--charcoal);
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  overflow-wrap: break-word;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-head);
+  font-weight: 700;
+  color: var(--sage);
+  line-height: 1.2;
+  margin: 0 0 0.5em;
+  text-wrap: balance;
+}
+h1 {
+  font-size: clamp(1.9rem, 4.2vw, 2.75rem);
+}
+h2 {
+  font-size: clamp(1.45rem, 3vw, 1.9rem);
+}
+h3 {
+  font-size: 1.2rem;
+}
+p {
+  margin: 0 0 1em;
+}
+
+a {
+  color: var(--sage);
+  text-decoration-color: var(--terracotta);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+a:hover {
+  color: var(--terracotta-ink);
+}
+:focus-visible {
+  outline: 3px solid var(--terracotta-ink);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.wrap {
+  max-width: var(--wrap);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+.section {
+  padding-block: var(--space);
+}
+.section + .section {
+  padding-top: 0;
+}
+.section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+}
+.section-head h2 {
+  margin: 0;
+}
+.lede {
+  font-size: 1.15rem;
+  color: var(--muted);
+  max-width: 40rem;
+}
+.muted {
+  color: var(--muted);
+}
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -3rem;
+  background: var(--sage);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  z-index: 10;
+}
+.skip-link:focus {
+  top: 1rem;
+  color: #fff;
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.9rem;
+  padding: 0.6rem 1.35rem;
+  border-radius: 999px;
+  border: 2px solid var(--terracotta-ink);
+  background: var(--terracotta-ink);
+  color: #fff;
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+.btn:hover {
+  background: var(--terracotta-ink-hover);
+  border-color: var(--terracotta-ink-hover);
+  color: #fff;
+}
+.btn--ghost {
+  background: transparent;
+  color: var(--sage);
+  border-color: var(--sage);
+}
+.btn--ghost:hover {
+  background: var(--sage);
+  border-color: var(--sage);
+  color: #fff;
+}
+
+/* ---------- Badges / chips ---------- */
+.badge {
+  display: inline-block;
+  padding: 0.1rem 0.6rem;
+  border-radius: 999px;
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.02em;
+  background: var(--mustard);
+  color: var(--charcoal);
+}
+.badge--sage {
+  background: var(--sage-soft);
+  color: var(--sage);
+}
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.chip {
+  display: inline-block;
+  padding: 0.3rem 0.85rem;
+  border: 1.5px solid var(--line);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--charcoal);
+  font-size: 0.95rem;
+  text-decoration: none;
+}
+.chip:hover {
+  border-color: var(--sage);
+  color: var(--sage);
+}
+.chip[aria-current='page'],
+.chip.is-active {
+  background: var(--sage);
+  border-color: var(--sage);
+  color: #fff;
+}
+.chip small {
+  opacity: 0.75;
+}
+
+/* ---------- Product grid + card ---------- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+  gap: clamp(1rem, 2.5vw, 1.75rem);
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+@media (max-width: 40em) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+  .card__body {
+    padding: 0.75rem 0.8rem 0.9rem;
+  }
+  .card__title {
+    font-size: 0.98rem;
+  }
+  .card__foot .muted {
+    display: none;
+  }
+}
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgb(51 51 51 / 0.06), 0 12px 28px rgb(47 93 80 / 0.1);
+}
+.card__img {
+  aspect-ratio: 1;
+  background: var(--sage-soft);
+}
+.card__img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1rem 1.1rem 1.15rem;
+  flex: 1;
+}
+.card__title {
+  font-size: 1.05rem;
+  margin: 0;
+}
+.card__title a {
+  text-decoration: none;
+  color: var(--sage);
+}
+/* Whole card is clickable via the title link. */
+.card__title a::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+}
+.card__meta {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin: 0;
+}
+.card__foot {
+  margin-top: auto;
+  padding-top: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+.price {
+  font-family: var(--font-head);
+  font-weight: 700;
+  color: var(--terracotta-ink);
+  font-size: 1.05rem;
+}
+.card__flags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+.card__flags:not(:has(*)) {
+  display: none;
+}
+
+/* ---------- Prose (Markdown bodies, About, Terms) ---------- */
+.prose {
+  max-width: 42rem;
+}
+.prose h2 {
+  margin-top: 1.8em;
+}
+.prose ul {
+  padding-left: 1.2em;
+}
+.prose li {
+  margin-bottom: 0.3em;
+}
+.placeholder-note {
+  border-left: 4px solid var(--mustard);
+  background: var(--paper);
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

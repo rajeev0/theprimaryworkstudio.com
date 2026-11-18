@@ -1,0 +1,15 @@
+---
+import Base from '../layouts/Base.astro';
+import ProductGrid from '../components/ProductGrid.astro';
+import { getProducts } from '../lib/products';
+
+const bundles = (await getProducts()).filter((p) => p.data.isBundle);
+---
+
+<Base title="Bundles" description="Money-saving bundles of Montessori printables from The Primary Work Studio.">
+  <div class="wrap section">
+    <h1>Bundles</h1>
+    <p class="lede">Related packs grouped together for less than buying each one on its own.</p>
+    {bundles.length ? <ProductGrid products={bundles} eagerCount={4} /> : <p>No bundles yet. <a href="/shop/">Browse the shop</a>.</p>}
+  </div>
+</Base>

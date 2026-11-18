@@ -1,0 +1,30 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE, FEATURES } from '../site';
+---
+
+<Base title="Privacy" description={`Privacy policy for ${SITE.name}.`}>
+  <div class="wrap section prose">
+    <h1>Privacy</h1>
+    <p class="placeholder-note">
+      <strong>Placeholder.</strong> Review and replace this text. Edit <code>src/pages/privacy.astro</code>.
+    </p>
+    <p>This website is a catalog. It does not sell anything, take payments, ask you to log in, or set cookies.</p>
+    <h2>What we collect</h2>
+    <p>
+      {
+        FEATURES.analyticsToken
+          ? 'We use Cloudflare Web Analytics to count page visits. It does not use cookies or track you across other websites.'
+          : 'Nothing. We do not use analytics or tracking on this site.'
+      }
+      Our host, Cloudflare, keeps standard server logs to keep the site secure.
+    </p>
+    <h2>Buying a product</h2>
+    <p>
+      When you click a "Buy" button you go to another store (such as Teachers Pay Teachers or Etsy). That store's own privacy
+      policy applies there.
+    </p>
+    <h2>Contact</h2>
+    <p>Email <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.</p>
+  </div>
+</Base>

@@ -1,0 +1,96 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE, FEATURES } from '../site';
+
+interface Props {
+  title?: string;
+  description?: string;
+  /** Absolute or root-relative URL of the social share image. */
+  image?: { src: string; width: number; height: number; alt: string };
+  type?: 'website' | 'product' | 'article';
+  jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  /** Extra <meta property> tags, e.g. product price for Pinterest rich pins. */
+  meta?: { property: string; content: string }[];
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description = SITE.intro,
+  image = { src: '/brand/social-card.png', width: 500, height: 500, alt: SITE.name },
+  type = 'website',
+  jsonLd,
+  meta = [],
+  noindex = false,
+} = Astro.props;
+
+const fullTitle = title ? `${title} | ${SITE.name}` : `${SITE.name}: ${SITE.tagline}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const imageUrl = new URL(image.src, Astro.site).href;
+
+const siteLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: SITE.name,
+  url: SITE.url,
+  logo: new URL('/brand/social-card.png', Astro.site).href,
+  sameAs: Object.values(SITE.storeLinks).filter(Boolean),
+};
+const ld = [siteLd, ...(jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [])];
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta name="theme-color" content="#2F5D50" />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="alternate" type="application/rss+xml" title={`${SITE.name}: new products`} href="/rss.xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <link rel="preload" href="/fonts/quicksand-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/andika-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+
+    <!-- Open Graph (Facebook, Pinterest, iMessage...) -->
+    <meta property="og:site_name" content={SITE.name} />
+    <meta property="og:type" content={type === 'product' ? 'product' : type} />
+    <meta property="og:title" content={title ?? SITE.name} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={imageUrl} />
+    <meta property="og:image:width" content={String(image.width)} />
+    <meta property="og:image:height" content={String(image.height)} />
+    <meta property="og:image:alt" content={image.alt} />
+    {meta.map((m) => <meta property={m.property} content={m.content} />)}
+    <meta name="twitter:card" content="summary_large_image" />
+
+    {ld.map((obj) => <script type="application/ld+json" set:html={JSON.stringify(obj)} />)}
+
+    {
+      FEATURES.analyticsToken && (
+        <script
+          defer
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon={JSON.stringify({ token: FEATURES.analyticsToken })}
+        />
+      )
+    }
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

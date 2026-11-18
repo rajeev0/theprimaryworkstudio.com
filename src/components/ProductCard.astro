@@ -1,0 +1,45 @@
+---
+import { Picture } from 'astro:assets';
+import { type Product, productUrl, formatPrice, isNew, ageLabel, storeLinks, FACET_KEYS, FACETS, slugify } from '../lib/products';
+
+interface Props {
+  product: Product;
+  /** Load eagerly (first row above the fold). */
+  eager?: boolean;
+}
+const { product: p, eager = false } = Astro.props;
+const stores = storeLinks(p);
+// data-* attributes let the shop filter script show/hide cards.
+const filterData = Object.fromEntries(
+  FACET_KEYS.map((k) => [`data-${k}`, FACETS[k].values(p).map(slugify).join(' ')]),
+);
+---
+
+<li {...filterData}>
+  <article class="card">
+    <div class="card__img">
+      <Picture
+        src={p.data.cover}
+        alt=""
+        formats={['avif', 'webp']}
+        widths={[320, 480, 720]}
+        sizes="(min-width: 72rem) 17rem, (min-width: 40rem) 45vw, 92vw"
+        loading={eager ? 'eager' : 'lazy'}
+      />
+    </div>
+    <div class="card__body">
+      <div class="card__flags">
+        {p.data.status === 'draft' && <span class="badge badge--sage">Draft</span>}
+        {isNew(p) && <span class="badge">New</span>}
+        {p.data.isBundle && <span class="badge badge--sage">Bundle</span>}
+        {p.data.isFree && <span class="badge">Free</span>}
+      </div>
+      <h3 class="card__title"><a href={productUrl(p)}>{p.data.title}</a></h3>
+      <p class="card__meta">{ageLabel(p)}</p>
+      <div class="card__foot">
+        <span class="price">{formatPrice(p)}</span>
+        {stores.length > 0 && <span class="muted">on {stores.map((s) => (s.key === 'tpt' ? 'TpT' : s.name)).join(', ')}</span>}
+      </div>
+    </div>
+  </article>
+</li>

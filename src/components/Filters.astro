@@ -1,0 +1,122 @@
+---
+/**
+ * Shop filters. Every chip is a real link to a category page
+ * (/shop/subject/language/ etc.), so filtering works with no JavaScript.
+ * On /shop/ a small script upgrades the chips to combine filters in place.
+ */
+import { FACETS, FACET_KEYS, type FacetKey, type FacetValue } from '../lib/products';
+
+interface Props {
+  facets: Record<FacetKey, FacetValue[]>;
+  active?: { key: FacetKey; slug: string };
+  enhance?: boolean;
+}
+const { facets, active, enhance = false } = Astro.props;
+const shown = FACET_KEYS.filter((k) => facets[k].length > 0);
+---
+
+<div class="filters" data-filters={enhance ? '' : undefined}>
+  {
+    shown.map((key) => (
+      <div class="filters__group" role="group" aria-labelledby={`f-${key}`}>
+        <h2 class="filters__label" id={`f-${key}`}>
+          {FACETS[key].label}
+        </h2>
+        <ul class="chips">
+          {facets[key].map((v) => {
+            const isActive = active?.key === key && active.slug === v.slug;
+            return (
+              <li>
+                <a
+                  class="chip"
+                  href={isActive ? '/shop/' : `/shop/${key}/${v.slug}/`}
+                  aria-current={isActive ? 'page' : undefined}
+                  data-facet={key}
+                  data-value={v.slug}
+                >
+                  {v.value} <small>({v.count})</small>
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    ))
+  }
+  {
+    (active || enhance) && (
+      <p class="filters__reset" data-reset hidden={!active}>
+        <a href="/shop/">Clear filters</a>
+      </p>
+    )
+  }
+</div>
+
+{
+  enhance && (
+    <script>
+      // Progressive enhancement: combine filters on /shop/ without reloading.
+      const root = document.querySelector<HTMLElement>('[data-filters]');
+      const cards = Array.from(document.querySelectorAll<HTMLElement>('#catalog > li'));
+      const empty = document.querySelector<HTMLElement>('[data-empty]');
+      const count = document.querySelector<HTMLElement>('[data-count]');
+      const reset = root?.querySelector<HTMLElement>('[data-reset]');
+      const state = new Map<string, string>();
+
+      function apply() {
+        let visible = 0;
+        for (const card of cards) {
+          const ok = [...state].every(([k, v]) => (card.dataset[k] ?? '').split(' ').includes(v));
+          card.hidden = !ok;
+          if (ok) visible++;
+        }
+        root?.querySelectorAll<HTMLAnchorElement>('a[data-facet]').forEach((a) => {
+          const on = state.get(a.dataset.facet!) === a.dataset.value;
+          a.classList.toggle('is-active', on);
+          a.setAttribute('aria-pressed', String(on));
+        });
+        if (empty) empty.hidden = visible > 0;
+        if (count) count.textContent = `${visible} product${visible === 1 ? '' : 's'}`;
+        if (reset) reset.hidden = state.size === 0;
+        const qs = new URLSearchParams([...state]).toString();
+        history.replaceState(null, '', qs ? `?${qs}` : location.pathname);
+      }
+
+      root?.addEventListener('click', (e) => {
+        const a = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[data-facet], [data-reset] a');
+        if (!a) return;
+        e.preventDefault();
+        if (a.dataset.facet) {
+          const { facet, value } = a.dataset as { facet: string; value: string };
+          state.get(facet) === value ? state.delete(facet) : state.set(facet, value);
+        } else state.clear();
+        apply();
+      });
+
+      // Restore from ?subject=language&grade=prek-1
+      new URLSearchParams(location.search).forEach((v, k) => state.set(k, v));
+      if (state.size) apply();
+    </script>
+  )
+}
+
+<style>
+  .filters {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding: 1.25rem;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+  }
+  .filters__label {
+    font-size: 0.95rem;
+    margin: 0 0 0.4rem;
+    color: var(--charcoal);
+  }
+  .filters__reset {
+    margin: 0;
+    font-size: 0.95rem;
+  }
+</style>

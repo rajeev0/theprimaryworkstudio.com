@@ -1,0 +1,29 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE } from '../site';
+---
+
+<Base title="Terms of Use" description={`Terms of Use for ${SITE.name} printables.`}>
+  <div class="wrap section prose">
+    <h1>Terms of Use</h1>
+    <p class="placeholder-note">
+      <strong>Placeholder.</strong> Replace this page with the final Terms of Use (see <code>00_Brand/Terms_of_Use.docx</code>). Edit
+      <code>src/pages/terms.astro</code>.
+    </p>
+    <p>
+      Thank you for choosing {SITE.name}. Each purchase is a license for one teacher, for use in one classroom or one home. Extra
+      licenses are available at a discount in the store where you bought the product.
+    </p>
+    <h2>You may</h2>
+    <ul>
+      <li>Print and copy the pages for your own students or children.</li>
+      <li>Share the resource with students through a password-protected online classroom.</li>
+    </ul>
+    <h2>You may not</h2>
+    <ul>
+      <li>Share, sell, or post the files (or pictures of whole pages) publicly or with other teachers.</li>
+      <li>Claim the work as your own or use it to make products for sale.</li>
+    </ul>
+    <p>All content is © {SITE.name}. Questions? Email <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.</p>
+  </div>
+</Base>

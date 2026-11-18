@@ -1,0 +1,35 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Page not found" noindex>
+  <div class="wrap section notfound">
+    <div class="notfound__badge"><img src="/brand/badge_icon.svg" alt="" width="300" height="300" /></div>
+    <h1>This shelf is empty</h1>
+    <p class="lede">We couldn't find that page. It may have moved, or the link may have a typo.</p>
+    <p class="actions">
+      <a class="btn" href="/shop/">Browse the shop</a>
+      <a class="btn btn--ghost" href="/">Go to the home page</a>
+    </p>
+  </div>
+</Base>
+
+<style>
+  .notfound {
+    text-align: center;
+  }
+  .notfound .lede {
+    margin-inline: auto;
+  }
+  .notfound__badge {
+    width: 7rem;
+    padding: 0.7rem;
+    margin: 0 auto 1rem;
+  }
+  .actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+</style>
