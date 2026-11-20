@@ -2,6 +2,8 @@
   "name": "theprimaryworkstudio-com",
   "compatibility_date": "2026-11-18",
   "assets": {
-    "directory": "./dist"
+    "directory": "./dist",
+    // Serve dist/404.html (with a real 404 status) for unknown addresses.
+    "not_found_handling": "404-page"
   }
 }

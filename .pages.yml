@@ -1,5 +1,5 @@
 # Pages CMS configuration (https://pagescms.org). Lets Revathi add and edit
-# products in a browser form. Saving commits to GitHub, and Cloudflare Pages
+# products in a browser form. Saving commits to GitHub, and Cloudflare
 # rebuilds the site. See README.md, "Method 1".
 #
 # Images live in each product's own folder (src/content/products/<slug>/).
