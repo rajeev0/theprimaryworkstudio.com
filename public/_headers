@@ -1,4 +1,4 @@
-# Cloudflare Pages response headers.
+# Cloudflare response headers (Workers static assets read this file).
 # Fingerprinted build assets and fonts never change, so cache them for a year.
 /_astro/*
   Cache-Control: public, max-age=31536000, immutable

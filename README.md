@@ -6,14 +6,15 @@ The showcase website for **The Primary Work Studio** (Montessori shelf work), at
 The site doesn't sell anything. Each product page has a button for every store
 where that product is sold (Teachers Pay Teachers now, Etsy and others later).
 It's a static site built with [Astro](https://astro.build) and hosted free on
-**Cloudflare Pages**. There's no server, no database and no paid service.
+**Cloudflare Workers** (static assets only, set up in `wrangler.jsonc`). There's no
+server code, no database and no paid service.
 
 **Contents**
 1. [Run the site on your computer](#1-run-the-site-on-your-computer)
 2. [Add a product (three ways)](#2-add-a-product)
 3. [Common changes](#3-common-changes): price, Etsy link, featured, draft
 4. [Check before you publish](#4-check-before-you-publish)
-5. [Deploy to Cloudflare Pages](#5-deploy-to-cloudflare-pages)
+5. [Deploy to Cloudflare](#5-deploy-to-cloudflare)
 6. [Connect theprimaryworkstudio.com](#6-connect-the-domain)
 7. [Optional extras](#7-optional-extras): analytics, newsletter
 8. [Where things live](#8-where-things-live)
@@ -69,7 +70,7 @@ Cloudflare then rebuilds the site in a minute or two. It needs no server and no
 GitHub OAuth app.
 
 **One-time setup (Rajeev)**
-1. Push this repo to GitHub (see [section 5](#5-deploy-to-cloudflare-pages)).
+1. Push this repo to GitHub (see [section 5](#5-deploy-to-cloudflare)).
 2. Go to <https://app.pagescms.org> and click **Sign in with GitHub**.
 3. When asked, **install the Pages CMS GitHub App** and give it access to *only* this repository.
 4. Invite Revathi: she needs a free GitHub account. Either add her as a collaborator on the
@@ -167,7 +168,11 @@ The same check runs automatically on GitHub for every pull request and every pus
 
 ---
 
-## 5. Deploy to Cloudflare Pages
+## 5. Deploy to Cloudflare
+
+The site is deployed as a **Cloudflare Worker that only serves static files**. There is no
+Worker script: `wrangler.jsonc` tells Cloudflare to serve the built `dist/` folder, to show
+`404.html` for unknown pages, and the `public/_headers` file sets caching headers.
 
 **Push to GitHub (once)**
 1. Create an empty **private** repository on GitHub, e.g. `theprimaryworkstudio.com`.
@@ -177,27 +182,26 @@ The same check runs automatically on GitHub for every pull request and every pus
    git push -u origin main
    ```
 
-**Create the Pages project (once)**
+**Create the Worker (once)**
 1. Log in to <https://dash.cloudflare.com> (a free account is enough).
-2. **Workers & Pages → Create → Pages → Connect to Git**, then pick the repository.
-3. Build settings:
+2. **Workers & Pages → Create → Import a repository**, then pick the repository.
+3. Settings:
 
    | Setting | Value |
    |---|---|
-   | Framework preset | Astro |
+   | Project name | `theprimaryworkstudio-com` (must match `name` in `wrangler.jsonc`) |
    | Production branch | `main` |
    | Build command | `npm run build` |
-   | Build output directory | `dist` |
-   | Environment variable | `NODE_VERSION` = `24.11.1` (optional: Cloudflare also reads `.nvmrc`) |
+   | Deploy command | `npx wrangler deploy` |
+   | Build variable | `NODE_VERSION` = `24.11.1` (optional: Cloudflare also reads `.nvmrc`) |
 
-4. **Save and Deploy.** After about 2 minutes the site is live at
-   `https://<project-name>.pages.dev`. **Check everything there first.**
+4. **Deploy.** After about 2 minutes the site is live at
+   `https://theprimaryworkstudio-com.<your-account>.workers.dev`. **Check everything there first.**
 
 **From then on**
 - Every push to `main`, including every save in Pages CMS, **deploys to production**.
-- Every other branch or pull request gets its own **preview URL**
-  (`https://<branch>.<project-name>.pages.dev`), shown on the GitHub pull request.
-  Cloudflare stops search engines from indexing preview URLs.
+- Pushes to other branches build a **preview version** with its own URL, shown in
+  Cloudflare under the Worker's *Deployments* and on the GitHub pull request.
 - If a build fails, the previous version stays live. See *Deployments* in Cloudflare for the error.
 
 ---
@@ -207,14 +211,14 @@ The same check runs automatically on GitHub for every pull request and every pus
 `theprimaryworkstudio.com` is registered at **Porkbun**. Today it forwards (302) to the
 TpT store, and Porkbun forwards email for `info@` and `hello@`.
 
-**Recommended: move the nameservers to Cloudflare.** Cloudflare Pages can only serve the
+**Recommended: move the nameservers to Cloudflare.** Cloudflare can only serve the
 bare domain (`theprimaryworkstudio.com`, without `www`) when Cloudflare runs its DNS. The
 other option, CNAME records at Porkbun, only works for `www.` and would leave the bare
 domain stuck on a Porkbun redirect, the opposite of what we want. The domain stays
 registered (and paid for) at Porkbun; only the DNS moves.
 
-### Step 1: Check the site on `*.pages.dev`
-Finish [section 5](#5-deploy-to-cloudflare-pages) and click through the pages.dev site.
+### Step 1: Check the site on `*.workers.dev`
+Finish [section 5](#5-deploy-to-cloudflare) and click through the workers.dev site.
 
 ### Step 2: Write down the current Porkbun settings
 In Porkbun → **Domain Management → theprimaryworkstudio.com**:
@@ -238,7 +242,7 @@ In Porkbun → **Domain Management → theprimaryworkstudio.com**:
    [*How to use Porkbun email when your DNS is hosted elsewhere*](https://kb.porkbun.com/article/47-how-to-use-porkbun-email-when-your-dns-is-hosted-elsewhere).)
    Also keep any other `TXT` records from your screenshot (e.g. site verification).
 3. **Delete** the copied `A`, `AAAA`, `ALIAS` or `CNAME` records for `@` and `www` that point
-   at Porkbun's URL-forwarding servers. Cloudflare Pages replaces them in step 5.
+   at Porkbun's URL-forwarding servers. Cloudflare replaces them in step 5.
 4. Cloudflare shows **two nameservers** (e.g. `xxx.ns.cloudflare.com`). Copy them.
 
 ### Step 4: Switch nameservers at Porkbun
@@ -247,9 +251,9 @@ Replace Porkbun's nameservers with Cloudflare's two, then save. Also turn off Po
 **URL forwarding** for the domain. The switch usually takes under an hour (up to 24 h).
 Cloudflare emails you when the domain is **Active**.
 
-### Step 5: Attach the domain to the Pages project
-Cloudflare → **Workers & Pages → your project → Custom domains**:
-1. **Set up a custom domain** → `theprimaryworkstudio.com` → Activate. Cloudflare creates the DNS record.
+### Step 5: Attach the domain to the Worker
+Cloudflare → **Workers & Pages → theprimaryworkstudio-com → Settings → Domains & Routes → Add → Custom domain**:
+1. Enter `theprimaryworkstudio.com` → **Add domain**. Cloudflare creates the DNS record and certificate.
 2. Do the same for `www.theprimaryworkstudio.com`.
 
 ### Step 6: Redirect `www` to the bare domain
@@ -271,8 +275,9 @@ Cloudflare → your domain → **Rules → Redirect Rules → Create rule → fr
 
 **Cloudflare Web Analytics** (no cookies, so no cookie banner needed). **Off for now.**
 To turn on: Cloudflare → **Analytics & Logs → Web Analytics → Add a site** → copy the token
-→ Pages project → **Settings → Environment variables** → add `PUBLIC_CF_ANALYTICS_TOKEN` =
-the token → redeploy. The Privacy page updates its wording automatically.
+→ Worker → **Settings → Build → Variables and secrets** → add `PUBLIC_CF_ANALYTICS_TOKEN` =
+the token → redeploy. (It must be a *build* variable: the value is baked into the pages when
+they're built.) The Privacy page updates its wording automatically.
 
 **"Join the newsletter" section.** **Off.** Set `PUBLIC_SHOW_NEWSLETTER` = `true` to show the
 placeholder. It doesn't collect emails until a (free) email service is connected in

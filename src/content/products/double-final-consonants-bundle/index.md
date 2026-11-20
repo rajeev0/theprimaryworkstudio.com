@@ -31,7 +31,14 @@ bundleItems:
   - "ss-words-phonics-pack"
   - "zz-words-phonics-pack"
 featured: true
-whatsIncluded: []
+whatsIncluded:
+  - "-ck Words Phonics Worksheets (10 words)"
+  - "-ff Words Phonics Worksheets (10 words)"
+  - "-ll Words Phonics Worksheets (10 words)"
+  - "-ss Words Phonics Worksheets (10 words)"
+  - "-zz Words Phonics Worksheets (4 words)"
+  - "Write the Word and Cut & Paste worksheets with answer keys, in color and black & white"
+  - "US Letter and A4 PDFs"
 words: []
 skills:
   - "phonics (double final consonants)"
@@ -54,7 +61,13 @@ tags:
 stores:
   tpt: "https://www.teacherspayteachers.com/Product/Double-Final-Consonants-Bundle-ck-ff-ll-ss-zz-Phonics-Worksheets-18400268"
 cover: "./cover.png"
-previews: []
+# Previews are the five packs' covers, so buyers see everything in the bundle.
+previews:
+  - "./preview1.png"
+  - "./preview2.png"
+  - "./preview3.png"
+  - "./preview4.png"
+  - "./preview5.png"
 pin: "./pin.png"
 ---
 
