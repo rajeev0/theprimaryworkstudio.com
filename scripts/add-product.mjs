@@ -140,10 +140,20 @@ export function buildProduct(folderName, listing, { knownSlugs = [] } = {}) {
   }
   if (!Object.keys(stores).length) todos.push('stores (no store URL in PUBLISHED)');
   const folderDate = folderName.match(/^(\d{4}-\d{2}-\d{2})_/)?.[1];
-  const publishedDate = dates.sort()[0] ?? folderDate ?? need('', 'publishedDate');
+  // A missing date or description must still pass the schema (drafts are
+  // validated too), so write a valid placeholder and mark it as a TODO.
+  let publishedDate = dates.sort()[0] ?? folderDate;
+  if (!publishedDate) {
+    todos.push('publishedDate (set to today)');
+    publishedDate = new Date().toISOString().slice(0, 10);
+  }
 
   // --- descriptions --------------------------------------------------------
-  const shortDescription = need((sections['SHORT DESCRIPTION'] ?? '').replace(/\s*\n\s*/g, ' '), 'shortDescription');
+  let shortDescription = (sections['SHORT DESCRIPTION'] ?? '').replace(/\s*\n\s*/g, ' ').trim();
+  if (shortDescription.length < 10) {
+    todos.push('shortDescription');
+    shortDescription = 'TODO: write a one-sentence description';
+  }
   const full = sections['FULL DESCRIPTION'] ?? '';
 
   // Pull structured bits out of the full description; the rest becomes the body.
@@ -287,8 +297,16 @@ function importFolder(srcDir, { force, dryRun, knownSlugs }) {
   const imageInfo = {
     cover: images.find((f) => /^cover\.png$/i.test(f)),
     pin: images.find((f) => /^pin\.png$/i.test(f)),
-    previews: images.filter((f) => /^preview\d\.png$/i.test(f)).sort(),
+    // Lowercase to match the copied file names (case matters on Linux builds).
+    previews: images.filter((f) => /^preview\d\.png$/i.test(f)).map((f) => f.toLowerCase()).sort(),
   };
+
+  // Without a cover the product can't pass the schema even as a draft, and
+  // one failing product stops the whole site from deploying. Skip it.
+  if (!imageInfo.cover) {
+    console.warn(`  skip  ${slug}: no cover.png (add one and run again)`);
+    return null;
+  }
 
   const listing = parseListing(fs.readFileSync(listingPath, 'utf8'));
   const { product, body, todos } = buildProduct(folderName, listing, { knownSlugs });

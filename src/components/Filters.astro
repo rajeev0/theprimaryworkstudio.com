@@ -94,7 +94,11 @@ const shown = FACET_KEYS.filter((k) => facets[k].length > 0);
       });
 
       // Restore from ?subject=language&grade=prek-1
-      new URLSearchParams(location.search).forEach((v, k) => state.set(k, v));
+      // Only real filters; ignore extras like ?utm_source=pinterest or ?fbclid=...
+      const known = new Set(Array.from(root?.querySelectorAll<HTMLElement>('[data-facet]') ?? [], (a) => a.dataset.facet!));
+      new URLSearchParams(location.search).forEach((v, k) => {
+        if (known.has(k)) state.set(k, v);
+      });
       if (state.size) apply();
     </script>
   )

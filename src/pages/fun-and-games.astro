@@ -1,0 +1,69 @@
+---
+/**
+ * Free online activities, embedded from Canva.
+ * To add one: in Canva, Share > Embed, copy the "src" link from the embed
+ * code (it ends in /view?embed) and the plain view link, and add an entry
+ * to GAMES below. `ratio` is height / width (1 = square).
+ */
+import Base from '../layouts/Base.astro';
+
+const GAMES = [
+  {
+    id: 'alphabet-tracing',
+    title: 'Alphabet Tracing Game',
+    description: 'Trace the letters of the alphabet with a finger or mouse.',
+    embed: 'https://www.canva.com/design/DAHbat3tZk0/hiV4OfOWZ8Rw87-GRPrv9Q/view?embed',
+    link: 'https://www.canva.com/design/DAHbat3tZk0/hiV4OfOWZ8Rw87-GRPrv9Q/view?utm_content=DAHbat3tZk0&utm_campaign=designshare&utm_medium=embeds&utm_source=link',
+    ratio: 1,
+  },
+];
+---
+
+<Base title="Fun & Games" description="Free, calm online activities for little learners from The Primary Work Studio.">
+  <div class="wrap section">
+    <h1>Fun &amp; Games</h1>
+    <p class="lede">Free activities to try at home or in the classroom. Nothing to download, and no sign-up.</p>
+
+    {
+      GAMES.map((g) => (
+        <section class="game" aria-labelledby={`game-${g.id}`}>
+          <h2 id={`game-${g.id}`}>{g.title}</h2>
+          <p>{g.description}</p>
+          <div class="game__frame" style={`aspect-ratio: 1 / ${g.ratio}`}>
+            <iframe src={g.embed} title={g.title} loading="lazy" allow="fullscreen" allowfullscreen />
+          </div>
+          <p class="muted small">
+            <a href={g.link} target="_blank" rel="noopener">Open {g.title} full screen</a> · made with Canva
+          </p>
+        </section>
+      ))
+    }
+  </div>
+</Base>
+
+<style>
+  .game {
+    margin-top: 2rem;
+    max-width: 48rem;
+  }
+  .game__frame {
+    position: relative;
+    width: 100%;
+    max-height: 85vh;
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
+  }
+  .game__frame iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  .small {
+    font-size: 0.9rem;
+  }
+</style>
