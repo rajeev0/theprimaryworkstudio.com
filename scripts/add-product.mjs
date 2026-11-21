@@ -2,8 +2,8 @@
 /**
  * Import products from the shop's "05_Published" folders.
  *
- *   npm run add-product -- "D:/Reva_Montessori/Shop/05_Published/2026-11-17_ck-words_phonics-pack"
- *   npm run add-product -- --all "D:/Reva_Montessori/Shop/05_Published"
+ *   npm run add-product -- "C:/git-repo/The Primary Work Studio Shop/05_Published/2026-11-17_ck-words_phonics-pack"
+ *   npm run add-product -- --all "C:/git-repo/The Primary Work Studio Shop/05_Published"
  *
  * Options:
  *   --all      treat the path as a folder OF product folders and import each one
