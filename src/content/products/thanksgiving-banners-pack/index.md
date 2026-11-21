@@ -1,11 +1,11 @@
 ---
 # Imported by scripts/add-product.mjs, then filled in by hand (2026-11-20).
-# Draft until Revathi approves and it has a store link (tpt/etsy under stores); then set status: "published".
+# Approved by Revathi 2026-11-21; live on TpT 2026-11-21.
 title: "Thanksgiving Door Decor & Bulletin Board Banners"
 seoTitle: "Thanksgiving Door Decor & Bulletin Board Banners | Give Thanks Posters | Fall Classroom Decor PreK–2"
 trackerId: "P-004, P-005"
-status: "draft"
-publishedDate: 2026-11-20
+status: "published"
+publishedDate: 2026-11-21
 shortDescription: "Bright, ready-to-print Thanksgiving and fall banners for your classroom door or bulletin board."
 subject:
   - "Art"
@@ -58,7 +58,8 @@ tags:
   - "kindergarten"
   - "montessori"
   - "printable"
-stores: {}
+stores:
+  tpt: "https://www.teacherspayteachers.com/Product/Thanksgiving-Door-Decor-Bulletin-Board-Banners-Give-Thanks-Posters-18452173"
 cover: "./cover.png"
 previews:
   - "./preview1.png"
