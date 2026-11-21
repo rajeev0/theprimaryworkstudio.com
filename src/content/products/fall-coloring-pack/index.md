@@ -1,11 +1,10 @@
 ---
 # Imported by scripts/add-product.mjs, then filled in by hand (2026-11-21).
-# In review with Revathi (shop 03_InReview). Draft until it has a store link:
-# add `tpt:` under stores and set status: "published".
+# Approved by Revathi 2026-11-21 as a FREE product (was $2). Live on TpT 2026-11-21.
 title: "Fall Coloring Pages"
-seoTitle: "Fall Coloring Pages | 10 Simple Autumn Pictures | Pumpkin, Apple, Turkey, Owl | PreK–K"
+seoTitle: "FREE Fall Coloring Pages | 10 Simple Autumn Pictures | Pumpkin, Apple, Turkey, Owl | PreK–K"
 trackerId: "P-011"
-status: "draft"
+status: "published"
 publishedDate: 2026-11-21
 shortDescription: "Ten big, simple fall coloring pages with thick outlines, made for preschool hands."
 subject:
@@ -20,8 +19,8 @@ pageCount: 14
 formats:
   - "US Letter"
   - "A4"
-price: 2
-isFree: false
+price: 0
+isFree: true
 isBundle: false
 bundleItems: []
 featured: false
@@ -45,6 +44,8 @@ skills:
   - "pencil and crayon grip"
   - "fall vocabulary"
 tags:
+  - "free"
+  - "freebie"
   - "fall coloring pages"
   - "autumn coloring"
   - "pumpkin"
@@ -59,7 +60,8 @@ tags:
   - "kindergarten"
   - "montessori"
   - "printable"
-stores: {}
+stores:
+  tpt: "https://www.teacherspayteachers.com/Product/Ten-big-simple-fall-coloring-pages-with-thick-outlines-made-for-preschoolers-18457512"
 cover: "./cover.png"
 previews:
   - "./preview1.png"
