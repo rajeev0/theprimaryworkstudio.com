@@ -60,6 +60,7 @@ tags:
   - "homeschool"
 stores:
   tpt: "https://www.teacherspayteachers.com/Product/Double-Final-Consonants-Bundle-ck-ff-ll-ss-zz-Phonics-Worksheets-18400268"
+  etsy: "https://www.etsy.com/listing/4622223726"
 cover: "./cover.png"
 # Previews are the five packs' covers, so buyers see everything in the bundle.
 previews:
