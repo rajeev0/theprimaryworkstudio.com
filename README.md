@@ -93,17 +93,17 @@ the old site stays up. The error message names the product and the field.
 
 ### Method 2: Import from `05_Published` (one command)
 
-Our finished products already live in `D:\Reva_Montessori\Shop\05_Published\`, each with
+Our finished products already live in `C:\git-repo\The Primary Work Studio Shop\05_Published\`, each with
 a `listing.txt` and the images. To import one:
 
 ```
-npm run add-product -- "D:/Reva_Montessori/Shop/05_Published/2026-11-17_ck-words_phonics-pack"
+npm run add-product -- "C:/git-repo/The Primary Work Studio Shop/05_Published/2026-11-17_ck-words_phonics-pack"
 ```
 
 To import every folder at once (folders already on the site are skipped):
 
 ```
-npm run add-product -- --all "D:/Reva_Montessori/Shop/05_Published"
+npm run add-product -- --all "C:/git-repo/The Primary Work Studio Shop/05_Published"
 ```
 
 Options: `--dry-run` shows what would happen without writing anything.
