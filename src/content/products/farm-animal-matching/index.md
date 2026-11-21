@@ -1,11 +1,10 @@
 ---
 # Imported by scripts/add-product.mjs, then filled in by hand (2026-11-21).
-# In review with Revathi (shop 03_InReview). Draft until it has its free TpT link:
-# add `tpt:` under stores and set status: "published". Publishing it also turns on /freebies/.
+# Approved by Revathi 2026-11-21. Live on TpT (free) 2026-11-21. Publishing it turns on /freebies/.
 title: "Farm Animal Matching Worksheet"
 seoTitle: "FREE Farm Animal Matching Worksheet | Match Pictures to Words | Preschool PreK–K"
 trackerId: "P-012"
-status: "draft"
+status: "published"
 publishedDate: 2026-11-21
 shortDescription: "A free farm animal worksheet: draw a line to match each animal to its name."
 subject:
@@ -55,7 +54,8 @@ tags:
   - "kindergarten"
   - "montessori"
   - "printable"
-stores: {}
+stores:
+  tpt: "https://www.teacherspayteachers.com/Product/A-free-farm-animal-worksheet-draw-a-line-to-match-each-animal-to-its-name-18457530"
 cover: "./cover.png"
 previews:
   - "./preview1.png"
