@@ -13,6 +13,14 @@ export const SITE = {
     tpt: 'https://www.teacherspayteachers.com/store/the-primary-work-studio',
     etsy: '',
   },
+  // Social profiles, linked from the home page. Leave url '' to hide.
+  social: {
+    x: { handle: '@theprimaryworks', url: 'https://x.com/theprimaryworks' },
+  },
+  // How many of the newest products the home page "What's new" section lists.
+  whatsNewCount: 4,
+  // Time zone used for the "Site last updated" date on the home page.
+  timeZone: 'America/New_York',
   // How many days a product counts as "New" after its publishedDate.
   newForDays: 60,
 } as const;

@@ -3,13 +3,25 @@ import { getImage } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import ProductGrid from '../components/ProductGrid.astro';
 import { SITE } from '../site';
-import { getProducts, isNew, facetValues } from '../lib/products';
+import { getProducts, facetValues } from '../lib/products';
 import banner from '../assets/brand/Banner_background_1200x320.png';
 
 const products = await getProducts();
-// Featured products get their own row; "New" shows the other recent ones so nothing repeats.
-const featured = products.filter((p) => p.data.featured).slice(0, 4);
-const newest = products.filter((p) => isNew(p) && !featured.includes(p)).slice(0, 4);
+// "What's new" always lists the most recently published products (getProducts is newest first).
+// Featured shows the other featured ones so nothing repeats.
+const newest = products.slice(0, SITE.whatsNewCount);
+const featured = products.filter((p) => p.data.featured && !newest.includes(p)).slice(0, 4);
+
+// The site is rebuilt on every deploy, so the build date is when the site was last updated.
+const updated = new Date();
+const updatedLabel = updated.toLocaleDateString('en-US', {
+  timeZone: SITE.timeZone,
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+const updatedIso = updated.toLocaleDateString('en-CA', { timeZone: SITE.timeZone }); // YYYY-MM-DD
+const x = SITE.social.x;
 const facets = facetValues(products);
 const tiles = [
   ...facets.subject.map((f) => ({ ...f, href: `/shop/subject/${f.slug}/`, kind: 'Subject' })),
@@ -31,6 +43,21 @@ const bg = await getImage({ src: banner, format: 'webp', width: 1200 });
       <p class="hero__tagline">{SITE.tagline}</p>
       <p class="hero__intro">{SITE.intro}</p>
       <p><a class="btn" href="/shop/">Browse the shop</a></p>
+      {
+        x.url && (
+          <p class="hero__follow">
+            <a href={x.url} rel="me noopener">
+              <svg class="x-logo" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+                <path
+                  fill="currentColor"
+                  d="M18.9 1.2h3.7l-8 9.2L24 22.8h-7.4l-5.8-7.6-6.6 7.6H.5l8.6-9.8L0 1.2h7.6l5.2 6.9 6.1-6.9Zm-1.3 19.4h2L6.5 3.3H4.3l13.3 17.3Z"
+                />
+              </svg>
+              Follow me on X <span class="hero__handle">{x.handle}</span>
+            </a>
+          </p>
+        )
+      }
     </div>
   </section>
 
@@ -38,7 +65,7 @@ const bg = await getImage({ src: banner, format: 'webp', width: 1200 });
     newest.length > 0 && (
       <section class="section wrap" aria-labelledby="new-title">
         <div class="section-head">
-          <h2 id="new-title">New on the shelf</h2>
+          <h2 id="new-title">What's new</h2>
           <a href="/shop/">See all products →</a>
         </div>
         <ProductGrid products={newest} eagerCount={2} />
@@ -93,6 +120,7 @@ const bg = await getImage({ src: banner, format: 'webp', width: 1200 });
         <a href="/about/">Read more about me →</a>
       </div>
     </div>
+    <p class="last-updated">Site last updated <time datetime={updatedIso}>{updatedLabel}</time></p>
   </section>
 </Base>
 
@@ -140,6 +168,28 @@ const bg = await getImage({ src: banner, format: 'webp', width: 1200 });
     background: rgb(255 248 236 / 0.85);
     border-radius: var(--radius-sm);
     padding: 0.25rem 0.5rem;
+  }
+  .hero__follow {
+    margin-top: 0.75rem;
+  }
+  .hero__follow a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: 600;
+    color: var(--sage);
+    background: rgb(255 248 236 / 0.85);
+    border-radius: var(--radius-sm);
+    padding: 0.25rem 0.6rem;
+  }
+  .hero__handle {
+    font-weight: 400;
+    color: var(--muted);
+  }
+  .last-updated {
+    margin: 1.5rem 0 0;
+    font-size: 0.9rem;
+    color: var(--muted);
   }
   .tiles {
     display: grid;
