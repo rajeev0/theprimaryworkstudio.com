@@ -10,8 +10,8 @@ How to make products look good on the site. For *how* to add a product, see the 
 - **No age range in site-wide branding.** The header, footer, home page, About page,
   logo and banners never say "Ages 3–5" or "PreK". The shop may grow to serve older
   children. Ages and grades go **only on individual products**, in the `grade` and
-  `ages` fields. (Revathi's own experience in a pre-K classroom can be mentioned on
-  About, because that's a fact about her, not a limit on the shop.)
+  `ages` fields. (The teacher's own experience in a pre-K classroom can be mentioned on
+  About, because that's a fact about the teacher, not a limit on the shop.)
 - Don't recolor, stretch or crop the logo, and keep clear space around it.
 - Calm and uncluttered: no neon, busy borders, clip-art clutter or stock photos of children.
 

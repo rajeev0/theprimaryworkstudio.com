@@ -1,6 +1,6 @@
 ---
 # Imported by scripts/add-product.mjs, then filled in by hand (2026-11-21).
-# Approved by Revathi 2026-11-21 as a FREE product (was $2). Live on TpT 2026-11-21.
+# Approved 2026-11-21 as a FREE product (was $2). Live on TpT 2026-11-21.
 title: "Fall Coloring Pages"
 seoTitle: "FREE Fall Coloring Pages | 10 Simple Autumn Pictures | Pumpkin, Apple, Turkey, Owl | PreK–K"
 trackerId: "P-011"

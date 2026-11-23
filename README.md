@@ -73,15 +73,15 @@ GitHub OAuth app.
 1. Push this repo to GitHub (see [section 5](#5-deploy-to-cloudflare)).
 2. Go to <https://app.pagescms.org> and click **Sign in with GitHub**.
 3. When asked, **install the Pages CMS GitHub App** and give it access to *only* this repository.
-4. Invite Revathi: she needs a free GitHub account. Either add her as a collaborator on the
-   repo (GitHub → Settings → Collaborators), or invite her by email from Pages CMS
+4. Invite the shop owner: they need a free GitHub account. Either add them as a collaborator on the
+   repo (GitHub → Settings → Collaborators), or invite them by email from Pages CMS
    (Settings → Collaborators).
 5. Open the repo in Pages CMS. It reads `.pages.yml` and shows a **Products** section.
 6. **Test it once:** add a throwaway product as a *draft* and check that Pages CMS saved
    it as `src/content/products/<name>/index.md`. If it saved it somewhere else, use the
    Media/Files view to create the folder first, or fall back to method 2 or 3, and tell Rajeev.
 
-**Adding a product (Revathi)**
+**Adding a product (shop owner)**
 1. In Pages CMS, open **Media**, create a folder with the product's name
    (e.g. `ff-words-phonics-pack`), and upload `cover.png`, `preview1-4.png` and `pin.png` into it.
 2. Open **Products → Add an entry**. Fill in the form, and pick the images from that folder.

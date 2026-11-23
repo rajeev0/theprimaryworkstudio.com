@@ -1,6 +1,6 @@
 ---
 # Imported by scripts/add-product.mjs, then filled in by hand (2026-11-20).
-# Approved by Revathi 2026-11-21; live on TpT 2026-11-21.
+# Approved 2026-11-21; live on TpT 2026-11-21.
 title: "Pilgrims Song Cards & Mayflower Map"
 seoTitle: "Pilgrims Song Cards & Mayflower Map | Thanksgiving Circle Time | Preschool PreK–1"
 trackerId: "P-008"

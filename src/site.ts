@@ -5,7 +5,7 @@ export const SITE = {
   tagline: 'Montessori shelf work',
   // No age range here or anywhere else in site-wide branding.
   intro:
-    'Calm, hands-on printables for the Montessori shelf, made and classroom-tested by Revathi, a CDA-credentialed Montessori teacher.',
+    'Calm, hands-on printables for the Montessori shelf, made and classroom-tested by a CDA-credentialed Montessori teacher.',
   url: 'https://theprimaryworkstudio.com',
   email: 'hello@theprimaryworkstudio.com',
   // Store front pages, shown in the footer. Leave '' to hide.

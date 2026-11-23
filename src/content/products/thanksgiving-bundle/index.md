@@ -1,6 +1,6 @@
 ---
 # Imported by scripts/add-product.mjs, then filled in by hand (2026-11-20).
-# Approved by Revathi 2026-11-21; live on TpT 2026-11-21.
+# Approved 2026-11-21; live on TpT 2026-11-21.
 title: "Thanksgiving Classroom Bundle"
 seoTitle: "Thanksgiving Classroom Bundle | Door Banners, Bulletin Board Posters + Pilgrims Song Cards | PreK–2"
 trackerId: "P-009"
