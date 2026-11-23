@@ -1,6 +1,6 @@
 ---
 # Imported by scripts/add-product.mjs, then filled in by hand (2026-11-21).
-# Approved by Revathi 2026-11-21. Live on TpT (free) 2026-11-21. Publishing it turns on /freebies/.
+# Approved 2026-11-21. Live on TpT (free) 2026-11-21. Publishing it turns on /freebies/.
 title: "Farm Animal Matching Worksheet"
 seoTitle: "FREE Farm Animal Matching Worksheet | Match Pictures to Words | Preschool PreK–K"
 trackerId: "P-012"

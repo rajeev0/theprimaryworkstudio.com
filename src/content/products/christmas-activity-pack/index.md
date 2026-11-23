@@ -1,6 +1,6 @@
 ---
 # Imported by scripts/add-product.mjs, then filled in by hand (2026-11-22).
-# Approved by Revathi 2026-11-22 as a FREE product. Live on TpT 2026-11-22.
+# Approved 2026-11-22 as a FREE product. Live on TpT 2026-11-22.
 title: "Christmas Activity Pack"
 seoTitle: "FREE Christmas Activity Pack | Color by Number, Sight Words, Patterns, Maze | PreK–K"
 trackerId: "P-013"

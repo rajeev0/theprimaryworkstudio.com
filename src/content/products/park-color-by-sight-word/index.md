@@ -1,6 +1,6 @@
 ---
 # Imported by scripts/add-product.mjs, then filled in by hand (2026-11-22).
-# Approved by Revathi 2026-11-21; made FREE by Rajeev 2026-11-22. Live on TpT (free) 2026-11-22.
+# Approved 2026-11-21; made FREE by Rajeev 2026-11-22. Live on TpT (free) 2026-11-22.
 title: "Park Color by Sight Word"
 seoTitle: "FREE Park Color by Sight Word | Montessori Sight Word Coloring Page | Grade K"
 trackerId: "P-002"
